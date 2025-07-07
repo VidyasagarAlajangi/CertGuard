@@ -1,12 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import api from "../lib/axios";
-import { Search, Loader, XCircle, CheckCircle } from "lucide-react";
+import { Search, XCircle, CheckCircle } from "lucide-react";
+
 
 const VerifyById = () => {
   const [certId, setCertId] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
+  const [messageIndex, setMessageIndex] = useState(0);
+
+  const loadingMessages = [
+    "Verifying your certificate on the blockchain...",
+    "Securing your credentials...",
+    "Almost there! Fetching your certificate...",
+    "Hang tight, magic is happening!"
+  ];
+
+  useEffect(() => {
+    if (!loading) return;
+    const interval = setInterval(() => {
+      setMessageIndex((prev) => (prev + 1) % loadingMessages.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [loading]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -53,9 +70,7 @@ const VerifyById = () => {
           className="bg-blue-600 text-white rounded-lg px-6 py-3 hover:bg-blue-700 font-semibold text-lg shadow-md hover:shadow-lg transition-all w-full flex items-center justify-center gap-2 disabled:bg-blue-400 disabled:cursor-not-allowed"
         >
           {loading ? (
-            <>
-              <Loader className="animate-spin" size={20} /> Verifying...
-            </>
+            <span className="animate-pulse text-center w-full">{loadingMessages[messageIndex]}</span>
           ) : (
             "Verify"
           )}
@@ -74,7 +89,9 @@ const VerifyById = () => {
           <div className="flex items-center gap-2 mb-2">
             {result.valid ? <CheckCircle /> : <XCircle />}
             <span className="font-bold text-lg">
-              {result.valid ? 'Certificate is valid.' : 'Certificate is invalid or has been tampered with.'}
+              {(result.dbVerification && result.blockchainVerification?.valid)
+                ? 'Certificate is valid.'
+                : 'Certificate is invalid or has been tampered with.'}
             </span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -84,6 +101,20 @@ const VerifyById = () => {
             <div><span className="font-semibold">Company:</span> {result.cert.companyName}</div>
             <div className="col-span-2"><span className="font-semibold">Certificate ID:</span> {result.cert.certId}</div>
           </div>
+          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-2">
+            <div>
+              <span className="font-semibold">DB Verification:</span> {result.dbVerification ? <span className="text-green-700 font-bold">Passed</span> : <span className="text-red-700 font-bold">Failed</span>}
+            </div>
+            <div>
+              <span className="font-semibold">Blockchain Verification:</span> {result.blockchainVerification?.valid ? <span className="text-green-700 font-bold">Passed</span> : <span className="text-red-700 font-bold">Failed</span>}
+            </div>
+          </div>
+          {result.cert.txHash && (
+            <div className="mt-2">
+              <span className="font-semibold">Blockchain Tx:</span>               <a href={`https://gnosis-chiado.blockscout.com/tx/${result.cert.txHash}`} target="_blank" rel="noopener noreferrer" className="text-blue-700 underline break-all">{result.cert.txHash}</a>
+
+            </div>
+          )}
         </div>
       )}
     </div>

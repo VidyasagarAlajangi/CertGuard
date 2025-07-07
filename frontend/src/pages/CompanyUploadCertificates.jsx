@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import api from "../lib/axios";
 import { useSelector, useDispatch } from "react-redux";
+
 
 const CompanyUploadCertificates = ({ type }) => {
   // Single upload state
@@ -25,6 +26,37 @@ const CompanyUploadCertificates = ({ type }) => {
   const [error, setError] = useState("");
 
   const { user } = useSelector((state) => state.auth);
+
+  const singleUploadMessages = [
+    "Preparing your certificate...",
+    "Uploading to the cloud...",
+    "Securing on the blockchain...",
+    "Finalizing issuance..."
+  ];
+  const bulkUploadMessages = [
+    "Processing CSV file...",
+    "Generating certificates...",
+    "Uploading all certificates...",
+    "Securing all on the blockchain..."
+  ];
+
+  const [singleMsgIndex, setSingleMsgIndex] = useState(0);
+  const [bulkMsgIndex, setBulkMsgIndex] = useState(0);
+
+  useEffect(() => {
+    if (loading) {
+      const singleInterval = setInterval(() => {
+        setSingleMsgIndex((prev) => (prev + 1) % singleUploadMessages.length);
+      }, 2000);
+      const bulkInterval = setInterval(() => {
+        setBulkMsgIndex((prev) => (prev + 1) % bulkUploadMessages.length);
+      }, 2000);
+      return () => {
+        clearInterval(singleInterval);
+        clearInterval(bulkInterval);
+      };
+    }
+  }, [loading]);
 
   // Handlers for single upload
   const handleSingleChange = (e) => {
@@ -158,10 +190,14 @@ const CompanyUploadCertificates = ({ type }) => {
           />
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 text-lg shadow"
             disabled={loading}
+            className="bg-blue-600 text-white rounded-lg px-6 py-3 hover:bg-blue-700 font-semibold text-lg shadow-md hover:shadow-lg transition-all w-full flex items-center justify-center gap-2 disabled:bg-blue-400 disabled:cursor-not-allowed"
           >
-            {loading ? "Uploading..." : "Issue Certificate"}
+            {loading ? (
+              <span className="animate-pulse text-center w-full">{singleUploadMessages[singleMsgIndex]}</span>
+            ) : (
+              "Issue Certificate"
+            )}
           </button>
         </form>
       )}
@@ -210,10 +246,14 @@ const CompanyUploadCertificates = ({ type }) => {
           />
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 text-lg shadow"
             disabled={loading}
+            className="bg-blue-600 text-white rounded-lg px-6 py-3 hover:bg-blue-700 font-semibold text-lg shadow-md hover:shadow-lg transition-all w-full flex items-center justify-center gap-2 disabled:bg-blue-400 disabled:cursor-not-allowed"
           >
-            {loading ? "Uploading..." : "Upload CSV & Issue"}
+            {loading ? (
+              <span className="animate-pulse text-center w-full">{bulkUploadMessages[bulkMsgIndex]}</span>
+            ) : (
+              "Upload CSV & Issue"
+            )}
           </button>
         </form>
       )}

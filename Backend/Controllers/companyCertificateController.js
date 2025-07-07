@@ -6,6 +6,7 @@ import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import generateCertificate from "../utils/generateCertificate.js";
 import { processCertificate } from "../utils/generateCertificate.js";
+import { sendEmailSES } from '../utils/sendEmailSES.js';
 
 // Issue a single certificate
 export const issueSingleCertificate = async (req, res) => {
@@ -24,7 +25,7 @@ export const issueSingleCertificate = async (req, res) => {
     let userId = recipient ? recipient._id : null;
 
     const certId = uuidv4();
-    const templatePath = "templates/Template_4.pdf";
+    const templatePath = "templates/CertGuard.pdf";
     const saveDir = "certificates/";
 
     // Fetch company name for template
@@ -43,7 +44,8 @@ export const issueSingleCertificate = async (req, res) => {
     );
 
     const localPdfPath = path.join(saveDir, fileName);
-    const { s3Url, hash } = await processCertificate(localPdfPath, certId, userId);
+    const { s3Url, hash, txHash, contractAddress } = await processCertificate(localPdfPath, certId);
+    console.log('[Controller] processCertificate result:', { s3Url, hash, txHash, contractAddress });
 
     // Create certificate record
     const certificate = new Certificate({
@@ -52,6 +54,7 @@ export const issueSingleCertificate = async (req, res) => {
       recipientEmail,
       userId, // <-- only set if user exists
       companyId: req.user.id,
+      companyName,
       courseName,
       courseDuration: courseDuration || "",
       remarks: remarks || "Successfully Completed",
@@ -60,9 +63,23 @@ export const issueSingleCertificate = async (req, res) => {
       s3Url,
       hash,
       qrCodeUrl: qrText,
+      txHash,
+      contractAddress
     });
 
     await certificate.save();
+
+    // Send email notification to recipient with PDF attachment
+    try {
+      await sendEmailSES(
+        recipientEmail,
+        'Your Certificate is Ready',
+        `<p>Signup or <p>login</p> to view your certificate.</p>`,
+        { path: localPdfPath, filename: fileName }
+      );
+    } catch (emailErr) {
+      console.error('Failed to send certificate email:', emailErr);
+    }
 
     res.status(201).json({
       success: true,
@@ -104,7 +121,7 @@ export const issueBulkCertificates = async (req, res) => {
     }
 
     const recipients = [];
-    const templatePath = "templates/Template_4.pdf";
+    const templatePath = "templates/CertGuard.pdf";
     const saveDir = "certificates/";
     const certificates = [];
 
@@ -143,7 +160,8 @@ export const issueBulkCertificates = async (req, res) => {
           saveDir
         );
         const localPdfPath = path.join(saveDir, fileName);
-        const { s3Url, hash } = await processCertificate(localPdfPath, certId, userId);
+        const { s3Url, hash, txHash, contractAddress } = await processCertificate(localPdfPath, certId);
+        console.log('[Controller] processCertificate result:', { s3Url, hash, txHash, contractAddress });
 
         // Create certificate record
         const certificate = new Certificate({
@@ -152,6 +170,7 @@ export const issueBulkCertificates = async (req, res) => {
           recipientEmail: recipient.email,
           userId, // <-- only set if user exists
           companyId: req.user.id,
+          companyName,
           courseName,
           courseDuration: courseDuration || "",
           remarks: remarks || "Successfully Completed",
@@ -160,9 +179,24 @@ export const issueBulkCertificates = async (req, res) => {
           s3Url,
           hash,
           qrCodeUrl: qrText,
+          txHash,
+          contractAddress
         });
 
         await certificate.save();
+
+        // Send email notification to recipient with PDF attachment
+        try {
+          await sendEmailSES(
+            recipient.email,
+            'Your Certificate is Ready',
+            `<p>Signup or <a href=\"http://localhost:5173/login\">login</a> to view your certificate.</p>`,
+            { path: localPdfPath, filename: fileName }
+          );
+        } catch (emailErr) {
+          console.error('Failed to send certificate email:', emailErr);
+        }
+
         certificates.push(certificate);
       } catch (err) {
         console.error(`Error processing recipient ${recipient.email}:`, err);

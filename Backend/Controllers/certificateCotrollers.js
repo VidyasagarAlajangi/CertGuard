@@ -10,6 +10,7 @@ import s3 from '../lib/s3.js';
 import jsQR from 'jsqr';
 import { createCanvas, loadImage } from 'canvas';
 import sharp from 'sharp';
+import { verifyCertificateHash } from '../lib/blockchain.js';
 
 
 
@@ -296,9 +297,10 @@ export const getCertificateDownloadUrl = async (req, res) => {
 const verifyCertificate = async (req, res) => {
   try {
     const { certId } = req.params;
-    console.log(certId);
+    console.log("Searching for certId:", certId); // Debug log
     // Find certificate by certId and populate company name
     const cert = await Certificate.findOne({ certId }).populate("companyId", "name");
+    console.log("Certificate found:", cert); // Debug log
     if (!cert) return res.status(404).json({ valid: false, message: 'Certificate not found' });
 
     // Generate a pre-signed S3 URL for the file
@@ -315,10 +317,18 @@ const verifyCertificate = async (req, res) => {
     const hash = crypto.createHash('sha256').update(response.data).digest('hex');
 
     // Compare with hash stored in MongoDB
-    const isValid = hash === cert.hash;
+    const isValidDB = hash === cert.hash;
+
+    // Blockchain verification
+    let blockchain = { valid: false, txHash: cert.txHash, contractAddress: cert.contractAddress };
+    try {
+      blockchain.valid = await verifyCertificateHash(hash);
+    } catch (err) {
+      console.error('Blockchain verification failed:', err);
+    }
 
     res.json({
-      valid: isValid,
+      valid: isValidDB && blockchain.valid,
       cert: {
         certId: cert.certId,
         recipientName: cert.recipientName,
@@ -327,8 +337,12 @@ const verifyCertificate = async (req, res) => {
         companyName: cert.companyId?.name || "N/A",
         s3Url: cert.s3Url,
         hash: cert.hash,
+        txHash: cert.txHash,
+        contractAddress: cert.contractAddress,
       },
-      message: isValid ? "Certificate is valid." : "Certificate is invalid or has been tampered with."
+      dbVerification: isValidDB,
+      blockchainVerification: blockchain,
+      message: isValidDB && blockchain.valid ? "Certificate is valid (DB & Blockchain)." : "Certificate is invalid or has been tampered with."
     });
   } catch (error) {
     res.status(500).json({ valid: false, message: "Verification failed", error: error.message });

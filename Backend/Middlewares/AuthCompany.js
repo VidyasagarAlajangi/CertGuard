@@ -22,7 +22,12 @@ const companyAuth = async (req, res, next) => {
         .json({ success: false, message: "Access denied. Company access only." });
     }
 
-    req.user = decoded; // includes { id, role }
+    req.user = {
+      id: user._id,
+      role: user.role,
+      name: user.name,
+      email: user.email
+    };
     next();
   } catch (error) {
     console.error("Error in companyAuth middleware:", error);

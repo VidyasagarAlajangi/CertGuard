@@ -7,6 +7,7 @@ import { convertCmToPdfCoords } from "./pdfCoordinates.js";
 import uploadFileToS3 from './uploadToS3.js';
 import crypto from 'crypto';
 import QRCode from "qrcode";
+import { storeCertificateHash } from '../lib/blockchain.js';
 
 const generateCertificate = async (templatePath, recipient, saveDir) => {
   console.log('generateCertificate recipient:', recipient);
@@ -82,9 +83,9 @@ const generateCertificate = async (templatePath, recipient, saveDir) => {
   if (companyName) {
     drawCenteredInBox(
       String(companyName),
-      7.64,
-      14.29,
-      11.2, // slightly below course name
+      18,
+      12.5,
+      19, // slightly below course name
       16,
       helveticaOblique,
       rgb(0.2, 0.2, 0.2)
@@ -151,7 +152,7 @@ const generateCertificate = async (templatePath, recipient, saveDir) => {
   return { certId, fileName, hash, qrDataUrl, qrText };
 };
 
-async function processCertificate(localPdfPath, certId, userAddress) {
+async function processCertificate(localPdfPath, certId) {
   // 1. Upload to S3
   const s3Key = `certificates/${certId}.pdf`;
   const s3Result = await uploadFileToS3(localPdfPath, s3Key);
@@ -160,10 +161,23 @@ async function processCertificate(localPdfPath, certId, userAddress) {
   const fileBuffer = fs.readFileSync(localPdfPath);
   const hash = crypto.createHash('sha256').update(fileBuffer).digest('hex');
 
-  // 3. Return S3 URL and hash (no blockchain)
+  // 3. Store hash on blockchain
+  let txHash = "";
+  let contractAddress = process.env.CONTRACT_ADDRESS || "";
+  try {
+    console.log('[ProcessCertificate] Storing hash on blockchain:', hash);
+    txHash = await storeCertificateHash(hash);
+    console.log('[ProcessCertificate] Received txHash:', txHash);
+  } catch (err) {
+    console.error('[ProcessCertificate] Blockchain anchoring failed:', err);
+  }
+
+  // 4. Return S3 URL, hash, and blockchain info
   return {
     s3Url: s3Result.Location,
-    hash
+    hash,
+    txHash,
+    contractAddress
   };
 }
 
