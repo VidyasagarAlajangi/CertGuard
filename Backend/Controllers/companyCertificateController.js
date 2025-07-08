@@ -6,7 +6,6 @@ import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import generateCertificate from "../utils/generateCertificate.js";
 import { processCertificate } from "../utils/generateCertificate.js";
-import { sendEmailSES } from '../utils/sendEmailSES.js';
 
 // Issue a single certificate
 export const issueSingleCertificate = async (req, res) => {
@@ -68,18 +67,6 @@ export const issueSingleCertificate = async (req, res) => {
     });
 
     await certificate.save();
-
-    // Send email notification to recipient with PDF attachment
-    try {
-      await sendEmailSES(
-        recipientEmail,
-        'Your Certificate is Ready',
-        `<p>Signup or <p>login</p> to view your certificate.</p>`,
-        { path: localPdfPath, filename: fileName }
-      );
-    } catch (emailErr) {
-      console.error('Failed to send certificate email:', emailErr);
-    }
 
     res.status(201).json({
       success: true,
@@ -184,18 +171,6 @@ export const issueBulkCertificates = async (req, res) => {
         });
 
         await certificate.save();
-
-        // Send email notification to recipient with PDF attachment
-        try {
-          await sendEmailSES(
-            recipient.email,
-            'Your Certificate is Ready',
-            `<p>Signup or <a href=\"http://localhost:5173/login\">login</a> to view your certificate.</p>`,
-            { path: localPdfPath, filename: fileName }
-          );
-        } catch (emailErr) {
-          console.error('Failed to send certificate email:', emailErr);
-        }
 
         certificates.push(certificate);
       } catch (err) {

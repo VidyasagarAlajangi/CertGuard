@@ -1,0 +1,14 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands:
+      - npm ci
+  build:
+    commands:
+      - zip -r app.zip . -x "node_modules/*"
+artifacts:
+  files:
+    - app.zip
