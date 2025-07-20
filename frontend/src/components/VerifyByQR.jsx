@@ -49,7 +49,7 @@ const VerifyQr = () => {
       const formData = new FormData();
       formData.append("qrImage", image);
 
-      const { data: scanData } = await api.post('/scan-qr', formData, {
+      const { data: scanData } = await api.post('/certificates/scan-qr', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
