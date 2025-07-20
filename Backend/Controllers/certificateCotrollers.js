@@ -166,16 +166,10 @@ const getUserCertificates = async (req, res) => {
       "name"
     );
 
-    if (!certificates || certificates.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "No certificates found for this user.",
-      });
-    }
-
-    res.status(200).json({
+    // Always return 200 with an array, even if empty
+    return res.status(200).json({
       success: true,
-      message: "Certificates retrieved successfully.",
+      message: certificates.length === 0 ? "No certificates found for this user." : "Certificates retrieved successfully.",
       certificates,
     });
   } catch (error) {
