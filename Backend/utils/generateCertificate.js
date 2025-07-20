@@ -11,6 +11,12 @@ import { storeCertificateHash } from '../lib/blockchain.js';
 
 const generateCertificate = async (templatePath, recipient, saveDir) => {
   console.log('generateCertificate recipient:', recipient);
+  
+  // Ensure the save directory exists
+  if (!fs.existsSync(saveDir)) {
+    fs.mkdirSync(saveDir, { recursive: true });
+    console.log(`Created directory: ${saveDir}`);
+  }
   const {
     certId,
     name,

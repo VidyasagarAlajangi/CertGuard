@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import "dotenv/config";
 import { createServer } from "http";
+import fs from "fs";
+import path from "path";
 
 import connectDb from "./lib/db.js";
 import userRouter from "./Routes/userRoutes.js";
@@ -22,6 +24,15 @@ if (!process.env.JWT_SECRET) {
 app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
+
+// Create necessary directories if they don't exist
+const directories = ['certificates', 'uploads'];
+directories.forEach(dir => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+    console.log(`Created directory: ${dir}`);
+  }
+});
 
 // Serve static files from certificates and uploads directories
 app.use("/certificates", express.static("certificates"));
