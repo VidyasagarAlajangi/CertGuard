@@ -26,24 +26,22 @@ const Home = () => {
             Blockchain-powered digital certificate verification platform. Instantly validate credentials with military-grade security.
           </p>
           
-          <section className="py-16">
-  <div className="max-w-6xl mx-auto px-4">
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 text-center">
-      <div>
-        <h3 className="text-4xl font-bold text-slate-800">10K+</h3>
-        <p className="text-base mt-2 text-slate-600">Certificates Verified</p>
-      </div>
-      <div>
-        <h3 className="text-4xl font-bold text-slate-800">100+</h3>
-        <p className="text-base mt-2 text-slate-600">Institutions Onboard</p>
-      </div>
-      <div>
-        <h3 className="text-4xl font-bold text-slate-800">20+</h3>
-        <p className="text-base mt-2 text-slate-600">Countries Reached</p>
-      </div>
-    </div>
-  </div>
-</section>
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 text-center">
+              <div>
+                <h3 className="text-4xl font-bold text-slate-800">10K+</h3>
+                <p className="text-base mt-2 text-slate-600">Certificates Verified</p>
+              </div>
+              <div>
+                <h3 className="text-4xl font-bold text-slate-800">100+</h3>
+                <p className="text-base mt-2 text-slate-600">Institutions Onboard</p>
+              </div>
+              <div>
+                <h3 className="text-4xl font-bold text-slate-800">20+</h3>
+                <p className="text-base mt-2 text-slate-600">Countries Reached</p>
+              </div>
+            </div>
+          </div>
 
           
           
@@ -68,12 +66,7 @@ const Home = () => {
           </div>
           
           <div className="flex flex-col md:flex-row gap-10 justify-center items-stretch max-w-6xl mx-auto">
-            
-            
-            <div className="flex flex-col justify-center items-center text-gray-500 font-medium">
-              </div>
-            
-            
+            {/* Verification components can be added here */}
           </div>
         </div>
       </section>

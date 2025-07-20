@@ -9,12 +9,9 @@ const AnimatedNavLink = ({ to, children }) => (
   <Link
     to={to}
     reloadDocument={to.includes('#')}
-    className="group relative inline-block overflow-hidden h-5 flex items-center text-sm"
+    className="text-gray-300 hover:text-white transition-colors duration-200 text-sm font-medium"
   >
-    <div className="flex flex-col transition-transform duration-300 ease-out transform group-hover:-translate-y-1/2">
-      <span className="text-gray-300">{children}</span>
-      <span className="text-white">{children}</span>
-    </div>
+    {children}
   </Link>
 );
 
