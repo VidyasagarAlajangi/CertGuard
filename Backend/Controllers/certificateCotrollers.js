@@ -484,6 +484,7 @@ export const verifyCertificateByQR = async (req, res) => {
   }
 };
 
+
 export {
   verifyCertificate,
   downloadSingleCertificate,
