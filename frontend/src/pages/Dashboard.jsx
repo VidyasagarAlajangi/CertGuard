@@ -16,7 +16,7 @@ const Dashboard = () => {
       navigate('/login');
       return;
     }
-    api.get('/certificates/user/certificates')
+    api.get('/user/certificates')
       .then(res => {
         setCertificates(res.data.certificates || []);
         setLoading(false);
@@ -30,7 +30,7 @@ const Dashboard = () => {
 
   const handleDownload = async (certId) => {
     try {
-      const res = await api.get(`/certificates/download-url/${certId}`);
+      const res = await api.get(`/download-url/${certId}`);
       if (res.data && res.data.url) {
         window.open(res.data.url, '_blank');
       }

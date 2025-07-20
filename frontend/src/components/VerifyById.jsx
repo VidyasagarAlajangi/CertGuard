@@ -32,7 +32,7 @@ const VerifyById = () => {
     setResult(null);
 
     try {
-      const res = await api.get(`/certificates/public/verify/${certId}`);
+      const res = await api.get(`/public/verify/${certId}`);
       if (res.data && res.data.valid) {
         setResult(res.data);
       } else {

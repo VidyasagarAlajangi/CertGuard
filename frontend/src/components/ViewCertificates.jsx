@@ -13,7 +13,7 @@ export default function ViewCertificates() {
     const fetchCertificates = async () => {
       try {
         setLoading(true);
-        const res = await api.get("/certificates/admin/certificates");
+        const res = await api.get("/admin/certificates");
         setCertificates(res.data.certificates);
         setError(null);
       } catch (err) {

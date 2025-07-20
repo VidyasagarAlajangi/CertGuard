@@ -12,7 +12,7 @@ function PendingCertificates() {
     setError("");
     try {
       const token = localStorage.getItem("token");
-      const res = await api.get("/certificates/admin/certificates", {
+      const res = await api.get("/admin/certificates", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setCerts((res.data.certificates || []).filter(c => c.status === "pending"));
@@ -32,8 +32,8 @@ function PendingCertificates() {
     try {
       const token = localStorage.getItem("token");
       const url = action === "approve"
-        ? `/certificates/admin/certificates/approve/${id}`
-        : `/certificates/admin/certificates/reject/${id}`;
+        ? `/admin/certificates/approve/${id}`
+        : `/admin/certificates/reject/${id}`;
       await api.post(url, {}, { headers: { Authorization: `Bearer ${token}` } });
       await fetchPending();
     } catch (err) {
@@ -106,7 +106,7 @@ function PendingIssuanceQueue() {
     setError("");
     try {
       const token = localStorage.getItem("token");
-      const res = await api.get("/certificates/issuance/queue", {
+      const res = await api.get("/issuance/queue", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setQueue(res.data.requests || []);
@@ -126,8 +126,8 @@ function PendingIssuanceQueue() {
     try {
       const token = localStorage.getItem("token");
       const url = action === "approve"
-        ? `/certificates/issuance/approve/${id}`
-        : `/certificates/issuance/reject/${id}`;
+        ? `/issuance/approve/${id}`
+        : `/issuance/reject/${id}`;
       await api.post(url, {}, { headers: { Authorization: `Bearer ${token}` } });
       await fetchQueue();
     } catch (err) {

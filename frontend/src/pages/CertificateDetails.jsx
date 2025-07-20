@@ -13,7 +13,7 @@ const CertificateDetails = () => {
   useEffect(() => {
     const fetchCertificate = async () => {
       try {
-        const res = await api.get(`/certificates/verify/${id}`);
+        const res = await api.get(`/verify/${id}`);
         if (res.data && res.data.success) {
           setCertificate(res.data.certificate);
         } else {
