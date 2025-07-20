@@ -16,7 +16,7 @@ export default function AdminDashboard() {
   const [selected, setSelected] = useState(null);
 
   return (
-    <div className="min-h-[80vh] flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-38 px-2">
+    <div className="min-h-[80vh] flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 pt-32 pb-20 px-2">
       <div className="w-full max-w-3xl bg-white rounded-2xl shadow-2xl p-8">
         <h1 className="text-4xl font-extrabold text-center text-indigo-700 mb-8 tracking-wide drop-shadow">
           Admin Panel

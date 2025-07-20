@@ -46,7 +46,7 @@ const Signup = () => {
   };
 
   return (
-    <div className=" pt-20 flex flex-col items-center justify-center min-h-[70vh] bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="pt-32 flex flex-col items-center justify-center min-h-[70vh] bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md mt-10">
         <h2 className="text-3xl font-bold text-blue-700 mb-6 text-center">
           Sign Up

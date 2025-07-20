@@ -4,7 +4,7 @@ import VerifyByQR from '../components/VerifyByQR';
 
 const VerifyPage = () => {
   return (
-    <div className="min-h-screen pb-20 pt-30 bg-gradient-to-br from-blue-50 via-indigo-100 to-purple-50">
+    <div className="min-h-screen pb-20 pt-32 bg-gradient-to-br from-blue-50 via-indigo-100 to-purple-50">
       <div className="max-w-4xl mx-auto px-6">
         <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-12 tracking-tight">
           Certificate Verification

@@ -47,7 +47,7 @@ const Dashboard = () => {
   );
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[70vh] pt-30">
+    <div className="flex flex-col items-center justify-center min-h-[70vh] pt-32">
       <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-2xl">
         <h2 className="text-3xl font-bold text-blue-700 mb-6 text-center">My Certificates</h2>
         <div className="mb-6 flex justify-center">

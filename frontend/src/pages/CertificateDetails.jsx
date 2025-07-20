@@ -53,7 +53,7 @@ const CertificateDetails = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center pt-40  min-h-[70vh]">
+    <div className="flex flex-col items-center justify-center pt-32 min-h-[70vh]">
       <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-lg">
         <h2 className="text-3xl font-bold text-blue-700 mb-6 text-center">Certificate Details</h2>
         <div className="mb-4">
