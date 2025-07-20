@@ -61,7 +61,7 @@ const VerifyQr = () => {
       if (!certId) throw new Error("Invalid QR code format.");
 
       setLoading(true);
-      const { data: verifyData } = await api.get(`/public/verify/${certId}`);
+      const { data: verifyData } = await api.get(`/certificates/public/verify/${certId}`);
       setResult(verifyData);
     } catch (err) {
       setError(err.response?.data?.message || err.message);
