@@ -16,7 +16,7 @@ const Dashboard = () => {
       navigate('/login');
       return;
     }
-    api.get('/user/certificates')
+    api.get('/certificates/user/certificates')
       .then(res => {
         setCertificates(res.data.certificates || []);
         setLoading(false);
