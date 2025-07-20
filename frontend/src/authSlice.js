@@ -28,10 +28,21 @@ export const signup = createAsyncThunk(
 
 const userFromStorage = localStorage.getItem("user");
 
+// Safe JSON parsing function
+const safeJSONParse = (str) => {
+  if (!str || str === "undefined" || str === "null") return null;
+  try {
+    return JSON.parse(str);
+  } catch (error) {
+    console.error("JSON parse error:", error);
+    return null;
+  }
+};
+
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    user: userFromStorage ? JSON.parse(userFromStorage) : null,
+    user: safeJSONParse(userFromStorage),
     token: localStorage.getItem("token"),
     loading: false,
     error: null,
