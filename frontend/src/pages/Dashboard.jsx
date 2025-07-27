@@ -31,6 +31,7 @@ const Dashboard = () => {
   const handleDownload = async (certId) => {
     try {
       const res = await api.get(`/download-url/${certId}`);
+      console.log(res);
       if (res.data && res.data.url) {
         window.open(res.data.url, '_blank');
       }
